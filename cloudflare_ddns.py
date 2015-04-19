@@ -44,14 +44,22 @@ def main():
     # Read config file
     config.readfp(open(CONFIG_FILE))
     
+    check_failed = False
+    
     # Call check URL to determine if IPv4 or IPv6 address has changed
     if config.getboolean('DEFAULT', 'Check_Enable'):
-        cf_key4_response = requests.get(config.get('DEFAULT', 'Check_IPv4'), verify=config.getboolean('DEFAULT', 'Check_SSLVerify'))
-        cf_key6_response = requests.get(config.get('DEFAULT', 'Check_IPv6'), verify=config.getboolean('DEFAULT', 'Check_SSLVerify'))
+        try:
+            cf_key4_response = requests.get(config.get('DEFAULT', 'Check_IPv4'), verify=config.getboolean('DEFAULT', 'Check_SSLVerify'))
+        except:
+            check_failed = True
+        try:
+            cf_key6_response = requests.get(config.get('DEFAULT', 'Check_IPv6'), verify=config.getboolean('DEFAULT', 'Check_SSLVerify'))
+        except:
+            check_failed = True
     
     # If a key can be retrieved and it equals the one in the config, do nothing.
     # Else, run the update script.
-    if not (config.getboolean('DEFAULT', 'Check_Enable') and \
+    if check_failed or not (config.getboolean('DEFAULT', 'Check_Enable') and \
             cf_key4_response.status_code > 199 and cf_key4_response.status_code < 300 and \
             cf_key6_response.status_code > 199 and cf_key6_response.status_code < 300 and \
             cf_key4_response.text.strip() == config.get('DEFAULT', 'Check_Key') and \
