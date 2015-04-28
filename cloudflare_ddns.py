@@ -49,11 +49,11 @@ def main():
     # Call check URL to determine if IPv4 or IPv6 address has changed
     if config.getboolean('DEFAULT', 'Check_Enable'):
         try:
-            cf_key4_response = requests.get(config.get('DEFAULT', 'Check_IPv4'), verify=config.getboolean('DEFAULT', 'Check_SSLVerify'))
+            cf_key4_response = requests.get(config.get('DEFAULT', 'Check_IPv4'), verify=config.getboolean('DEFAULT', 'Check_SSLVerify'), timeout=10)
         except:
             check_failed = True
         try:
-            cf_key6_response = requests.get(config.get('DEFAULT', 'Check_IPv6'), verify=config.getboolean('DEFAULT', 'Check_SSLVerify'))
+            cf_key6_response = requests.get(config.get('DEFAULT', 'Check_IPv6'), verify=config.getboolean('DEFAULT', 'Check_SSLVerify'), timeout=10)
         except:
             check_failed = True
     
